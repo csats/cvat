@@ -704,6 +704,18 @@ function callAnnotationUI(jid) {
                 buildAnnotationUI(jobData, taskData[0],
                     imageMetaData[0], annotationData[0], annotationFormats[0], loadJobEvent);
             });
+            const annotationLogs = Logger.getLogs();
+
+            $.ajax({
+                url: '/api/v1/server/logs',
+                type: 'POST',
+                data: JSON.stringify(annotationLogs.export()),
+                contentType: 'application/json',
+            }).fail((errorData) => {
+                const message = `Could not send logs. Code: ${errorData.status}. `
+                    + `Message: ${errorData.responseText || errorData.statusText}`;
+                throw new Error(message);
+            });
         }).fail(onError);
     }).fail(onError);
 }
