@@ -16,8 +16,3 @@ urlpatterns = [
         name='login'),
     path('logout', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
 ]
-
-if settings.DJANGO_AUTH_TYPE == 'BASIC':
-    urlpatterns += [
-        path('register', views.register_user, name='register'),
-    ]
