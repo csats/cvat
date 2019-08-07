@@ -37,7 +37,7 @@ services:
       - cvat_redis
       - cvat_db
     ports:
-      - "8080:8080"
+      - "443:8443"
     build:
       context: .
       args:
@@ -52,7 +52,8 @@ services:
         TZ: "Etc/UTC"
         OPENVINO_TOOLKIT: "no"
     environment:
-      DJANGO_MODWSGI_EXTRA_ARGS: ""
+      ALLOWED_HOSTS: ${MY_IP}
+      DJANGO_MODWSGI_EXTRA_ARGS: --https-only --allow-localhost --ssl-certificate /etc/ssl/cvat-certs/cvat --https-port 8443 --server-name ${MY_IP}
     volumes:
       - cvat_data:/home/django/data
       - cvat_keys:/home/django/keys

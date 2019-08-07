@@ -147,6 +147,17 @@ COPY tests ${HOME}/tests
 RUN patch --binary -p1 < ${HOME}/cvat/apps/engine/static/engine/js/3rdparty.patch
 RUN chown -R ${USER}:${USER} .
 
+RUN export MY_IP=$(curl http://169.254.169.254/latest/meta-data/public-ipv4) && \
+    mkdir /etc/ssl/cvat-certs/ && \
+    apt-get update && \
+    apt-get install -y openssl && \
+    openssl genrsa -des3 -passout pass:x -out server.pass.key 2048 && \
+    openssl rsa -passin pass:x -in server.pass.key -out server.key && \
+    rm server.pass.key && \
+    openssl req -x509 -nodes -days 365 -newkey rsa:4096 -keyout /etc/ssl/cvat-certs/cvat.key -out /etc/ssl/cvat-certs/cvat.crt \
+        -subj "/C=US/ST=Washington/L=Seattle/O=C-SATS/OU=Eng/CN=${MY_IP}" && \
+    rm -rf /var/lib/apt/lists/*
+
 # RUN all commands below as 'django' user
 USER ${USER}
 
